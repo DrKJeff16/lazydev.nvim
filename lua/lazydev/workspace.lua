@@ -203,7 +203,7 @@ function M:debug(opts)
     Util.warn("Found `.luarc.json` in workspace. This may break **lazydev.nvim**\n- `" .. rc .. "`")
   end
   opts = opts or {}
-  local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
+  local root = self.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
