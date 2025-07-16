@@ -207,10 +207,26 @@ function M:debug(opts)
   local lines = { "## " .. root }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
+
+  ---@param value string[]|string
+  ---@param mods string
+  local function fnamemodify(value, mods)
+    if type(value) == 'table' then
+      for _, val in ipairs(value) do
+        fnamemodify(val, mods)
+      end
+
+      return
+    end
+
+    value = vim.fn.fnamemodify(value, mods)
+
+    local plugin = Pkg.get_plugin_name(value .. "/")
+    table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. value .. "`"))
+  end
+
   for _, lib in ipairs(library) do
-    lib = vim.fn.fnamemodify(lib, ":~")
-    local plugin = Pkg.get_plugin_name(lib .. "/")
-    table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
+    fnamemodify(lib, ":~")
   end
   if opts.details then
     lines[#lines + 1] = "```lua"
