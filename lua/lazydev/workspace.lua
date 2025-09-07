@@ -4,7 +4,7 @@ local Util = require("lazydev.util")
 
 ---@class lazydev.Workspace
 ---@field root string
----@field client_id number
+---@field client_id integer
 ---@field settings table
 ---@field library string[]
 local M = {}
@@ -19,7 +19,7 @@ function M.is_special(root)
   return root == M.SINGLE or root == M.GLOBAL
 end
 
----@param client_id number
+---@param client_id integer
 ---@param root string
 function M.new(client_id, root)
   local self = setmetatable({
@@ -34,7 +34,7 @@ function M.new(client_id, root)
   return self
 end
 
----@param client vim.lsp.Client|number
+---@param client vim.lsp.Client|integer
 ---@param root string
 function M.get(client, root)
   root = M.is_special(root) and root or Util.norm(root)
@@ -55,7 +55,7 @@ function M.single(client)
   return M.get(client, M.SINGLE)
 end
 
----@param opts {buf?:number, path?:string}
+---@param opts { buf?: integer, path?: string }
 function M.find(opts)
   if opts.buf then
     local Lsp = require("lazydev.lsp")
@@ -92,9 +92,9 @@ function M:has(path, opts)
 end
 
 ---@param client vim.lsp.Client
----@param buf number
-function M.get_root(client, buf)
-  local uri = vim.uri_from_bufnr(buf)
+---@param bufnr integer
+function M.get_root(client, bufnr)
+  local uri = vim.uri_from_bufnr(bufnr)
   for _, ws in ipairs(client.workspace_folders or {}) do
     if (uri .. "/"):sub(1, #ws.uri + 1) == ws.uri .. "/" then
       return ws.name
